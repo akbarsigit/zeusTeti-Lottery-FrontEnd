@@ -3,8 +3,9 @@ import { ethConnect } from "./config";
 import { ethers } from "ethers";
 // import tokenABI from "./tokenAbi.json";
 
-const backend = "http://localhost:8082";
+const backend = "http://localhost:3001";
 
+// get current draw id
 export async function getCurrentLottoId() {
   const url = backend + "/currentlotto";
   const options = {
@@ -16,6 +17,7 @@ export async function getCurrentLottoId() {
   return response;
 }
 
+// get draw info
 export async function getDrawJackpot() {
   const url = backend + "/getdrawjackpot";
   const options = {

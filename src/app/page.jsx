@@ -4,6 +4,13 @@ import Image from "next/image";
 import { NextUIProvider } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
+import {
+  getCurrentLottoId,
+  getDrawJackpot,
+  getDrawTimer,
+  getBalance,
+  fundContract,
+} from "./components/interfaces";
 
 export default function Home() {
   const [drawId, getLottoId] = useState([]);
@@ -11,9 +18,33 @@ export default function Home() {
   const [ticketSold, getTicketSold] = useState([]);
   const [currentBalance, getLottoBalance] = useState([]);
 
+  useEffect(() => {
+    getLottoStatus();
+    // functionTimerCountDown()
+    // fetchBalance()
+  }, []);
+
+  async function getLottoStatus() {
+    const lottoid = await getCurrentLottoId();
+    getLottoId(lottoid.data);
+    const result = await getDrawJackpot();
+    let jackpotraw = result.data[5]; // get the total jackpot in hex
+    let jackpotint = ethers.utils.formatEther(jackpotraw); //convert hex to int decimal
+    let jackpot = jackpotint.split(".")[0]; // remove the trailing 0=> 1000.0
+    console.log(jackpot);
+    // getJackpot(jackpot);
+    // const firstTicket = result.data[3];
+    // const lastTicket = result.data[5];
+    // let firstTickNum = Number(ethers.utils.formatEther(firstTicket));
+    // let lastTickNum = Number(ethers.utils.formatEther(lastTicket));
+    // let totalTickets = (lastTickNum - firstTickNum).toString();
+    // let ticketformat = totalTickets.split(".")[0];
+    // getTicketSold(ticketformat);
+  }
+
   return (
     <div className="flex mx-auto flex-col justify-center text-center text-[#FBE3D7]">
-      <p className="text-7xl  p-5">Zeus Teti Lottery</p>
+      <p className="text-7xl  p-5">GACHOR Teti Lottery</p>
       <div class="mx-auto p-3 border border-gray-200 rounded-lg shadow w-3/4">
         <p className="text-3xl p-5">Admin Panel</p>
         <p className="text-2xl p-5 ">Contract Balance</p>
@@ -28,7 +59,7 @@ export default function Home() {
       <div className="flex mt-5 gap-5 justify-items-center p-10">
         <div class="mx-auto p-3 border border-gray-200 rounded-lg shadow w-3/4">
           <p>Current Draw</p>
-          <p>Current Number</p>
+          <p>{drawId}</p>
         </div>
         <div class="mx-auto p-3 border border-gray-200 rounded-lg shadow w-3/4">
           <p>Ticket Sold</p>
@@ -40,7 +71,7 @@ export default function Home() {
         </div>
       </div>
       <div>
-        <p className="p-4">Ending in</p>
+        <p className="p-2">Ending in</p>
         <div className="justify-items-center">
           <div className="grid grid-flow-col gap-5 text-center auto-cols-max place-content-center">
             <div className="flex flex-col p-2 bg-[#FBE3D7] rounded-box text-neutral-content">
