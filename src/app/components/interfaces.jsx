@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ethConnect } from "./config";
 import { ethers } from "ethers";
-// import tokenABI from "./tokenAbi.json";
+import tokenABI from "./tokenAbi.json";
 
 const backend = "http://localhost:3001";
 
@@ -54,6 +54,7 @@ export async function getDrawTimer() {
 }
 
 export async function fundContract() {
+  // get signer, erc20 address, lottery address
   const call = await ethConnect();
   const n2dr = call.erc20;
   const lottery = call.lottery;
@@ -64,9 +65,7 @@ export async function fundContract() {
   let contract = new ethers.Contract(n2dr, tokenABI, wallet);
   let balance = await contract.balanceOf(lottery);
   let balanceNum = Number(ethers.utils.formatEther(balance));
-  if (jackpotNum > balanceNum) {
-    await contract.transfer(lottery, jackpot);
-  } else {
-    return "Contract has enough funding";
-  }
+
+  // fund the balance
+  await contract.transfer(lottery, jackpot);
 }
